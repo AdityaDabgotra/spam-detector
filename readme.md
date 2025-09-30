@@ -1,77 +1,94 @@
-# 📧 Spam Email Detector (Naive Bayes + TF-IDF)
+📧 Spam Email Detector (Naive Bayes + TF-IDF)
+![Python](https://img.shields.io/badge/Python-3.x-blue?logo=pythonhttps://img.shields.io/badge/ML-scikit--learn-orange?
 
-This project is a **machine learning-based Spam Detector** built using **Naive Bayes** and **TF-IDF vectorization** with `scikit-learn`.  
-It classifies emails as **Spam** or **Not Spam (Ham)** based on the [Email Spam Classification Dataset](https://www.kaggle.com/datasets/balaka18/email-spam-classification-dataset-csv).  
+![License](https://img.shields.io/badge
 
----
+![Status](https://img.shields.io/badge
 
-## 🚀 Features
-- Preprocessing of email text (cleaning & tokenization).
-- TF-IDF vectorization for feature engineering.
-- Multinomial Naive Bayes classifier for training & prediction.
-- Model persistence with **Joblib** (saves trained model, vocab, and TF-IDF).
-- Interactive CLI: Enter an email and get instant classification.
-- High accuracy on test data.
+A machine learning-based Spam Detector built on Naive Bayes and TF-IDF vectorization with scikit-learn.
+The model classifies emails as Spam or Ham (Not Spam) using the Email Spam Classification Dataset.
 
----
+🚀 Features
+Text preprocessing (cleaning, regex, tokenization).
 
-## 🛠️ Tech Stack
-- Python 3.x
-- Pandas, NumPy
-- scikit-learn
-- Joblib
-- Regex (for preprocessing)
+TF-IDF vectorization for feature engineering.
 
----
+Multinomial Naive Bayes classifier for training & prediction.
 
-## 📂 Project Structure
-- Spam_detector/
-- │── emails.csv # Dataset
-- │── index.py # Main script
-- │── spam_nb_model.pkl # Saved model (after training)
-- │── spam_tfidf.pkl # Saved TF-IDF transformer
-- │── spam_vocab.pkl # Saved vocabulary
-- │── README.md # Project documentation
+Model persistence with Joblib (saves trained model, TF-IDF transformer, and vocabulary).
 
+Interactive CLI: Enter an email → instantly get classified as Spam or Ham.
 
----
+Achieves 95%+ accuracy on test data.
 
-## ⚙️ Installation
-1. Clone the repository:
-    ```bash
-        git clone https://github.com/AdityaDabgotra/spam-detector.git
-        cd spam-detector
-    ```
-2. Install dependencies:
-    ```bash
-        pip install -r requirements.txt
-    ```
-3. Download dataset from Kaggle
-    Place emails.csv in the project root.
+🛠️ Tech Stack
+Language: Python 3.x
 
-## 📊 Model Performance
+Libraries: Pandas, NumPy, scikit-learn, Joblib, Regex
 
-    On test data:
+📂 Project Structure
+text
+Spam_detector/
+│── emails.csv              # Dataset
+│── index.py                # Main script
+│── spam_nb_model.pkl       # Saved Naive Bayes model
+│── spam_tfidf.pkl          # Saved TF-IDF transformer
+│── spam_vocab.pkl          # Saved vocabulary
+│── requirements.txt        # Dependencies
+│── README.md               # Project documentation
+⚙️ Installation & Setup
+Clone the repo:
 
-    High accuracy (typically >95% with proper preprocessing).
+bash
+git clone https://github.com/AdityaDabgotra/spam-detector.git
+cd spam-detector
+Install dependencies:
 
-    Detailed metrics (precision, recall, F1-score) are shown during training.
+bash
+pip install -r requirements.txt
+Download dataset from Kaggle and place it as emails.csv in the root directory.
 
-## 🔮 Future Improvements
+▶️ Usage
+Train the Model
+bash
+python index.py --train
+Run Interactive CLI for Predictions
+bash
+python index.py --predict
+You can then input example emails such as:
 
-    Add a web API using Flask/FastAPI for real-time spam detection.
+text
+Input: "Congratulations! You won a free lottery ticket, click here to claim"
+Output: SPAM 🚨
 
-    Deploy as a simple web app with a UI.
+Input: "Hi Team, please find attached the project report for review."
+Output: HAM ✅
+📊 Model Performance
+Metric	Score
+Accuracy	95%+
+Precision	High
+Recall	High
+F1-Score	High
+🔮 Future Improvements
+Deploy as a REST API (Flask/FastAPI) for real-time spam detection.
 
-        Try advanced models (Logistic Regression, Random Forest, Deep Learning).
+Add a web-based UI for ease of use.
 
-## 👨‍🏫 Learnings
+Experiment with more models:
 
-    How TF-IDF improves feature representation.
+Logistic Regression
 
-    Why Naive Bayes is effective for text classification.
+Random Forest
 
-    Importance of saving/loading trained models for reusability.
+Deep Neural Networks
 
-## 📜 License
-    This project is licensed under the MIT License.
+👨‍🏫 Learnings
+TF-IDF significantly improves text feature representation.
+
+Naive Bayes is powerful for text data due to word independence assumptions.
+
+Saving/loading models ensures reproducibility and deployment readiness.
+
+📜 License
+This project is licensed under the MIT License.
+
