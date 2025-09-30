@@ -25,13 +25,13 @@ It classifies emails as **Spam** or **Not Spam (Ham)** based on the [Email Spam 
 ---
 
 ## 📂 Project Structure
-Spam_detector/
-│── emails.csv # Dataset
-│── index.py # Main script
-│── spam_nb_model.pkl # Saved model (after training)
-│── spam_tfidf.pkl # Saved TF-IDF transformer
-│── spam_vocab.pkl # Saved vocabulary
-│── README.md # Project documentation
+- Spam_detector/
+- │── emails.csv # Dataset
+- │── index.py # Main script
+- │── spam_nb_model.pkl # Saved model (after training)
+- │── spam_tfidf.pkl # Saved TF-IDF transformer
+- │── spam_vocab.pkl # Saved vocabulary
+- │── README.md # Project documentation
 
 
 ---
