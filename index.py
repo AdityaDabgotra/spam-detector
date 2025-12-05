@@ -4,7 +4,7 @@ import re
 import os
 import joblib
 from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 
@@ -12,73 +12,65 @@ MODEL_FILE = "spam_nb_model.pkl"
 TFIDF_FILE = "spam_tfidf.pkl"
 VOCAB_FILE = "spam_vocab.pkl"
 
-
 df = pd.read_csv("emails.csv")
-X = df.drop(columns=["Email No.", "Prediction"])
+
+# X = email text column
+X = df["text"]     # <-- change this to the correct column name in your CSV
 y = df["Prediction"]
 
-
+# Load model if exists
 if os.path.exists(MODEL_FILE) and os.path.exists(TFIDF_FILE) and os.path.exists(VOCAB_FILE):
-    print("Loading saved model and TF-IDF...")
+    print("Loading saved model and transformers...")
     nb = joblib.load(MODEL_FILE)
     tfidf = joblib.load(TFIDF_FILE)
-    vocab = joblib.load(VOCAB_FILE)
-else:
-    print("Training new model...")
+    vectorizer = joblib.load(VOCAB_FILE)
 
-    # Split
+else:
+    print("Training a new model...")
+
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42, stratify=y
     )
 
+    # Convert text → count vectors
+    vectorizer = CountVectorizer(stop_words="english")
+    X_train_counts = vectorizer.fit_transform(X_train)
+    X_test_counts = vectorizer.transform(X_test)
+
     # TF-IDF
     tfidf = TfidfTransformer()
-    X_train_tfidf = tfidf.fit_transform(X_train)
-    X_test_tfidf = tfidf.transform(X_test)
+    X_train_tfidf = tfidf.fit_transform(X_train_counts)
+    X_test_tfidf = tfidf.transform(X_test_counts)
 
-    # Train NB
+    # Train NB classifier
     nb = MultinomialNB(alpha=0.5)
     nb.fit(X_train_tfidf, y_train)
 
-    # Evaluate
+    # Evaluation
     y_pred = nb.predict(X_test_tfidf)
-    print("Accuracy:\t", accuracy_score(y_test, y_pred))
-    print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
-    print("Classification Report:\n", classification_report(y_test, y_pred, digits=4))
+    print("\nAccuracy:", accuracy_score(y_test, y_pred))
+    print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))
+    print("\nClassification Report:\n", classification_report(y_test, y_pred))
 
-    # Save model, transformer, and vocab
+    # Save model
     joblib.dump(nb, MODEL_FILE)
     joblib.dump(tfidf, TFIDF_FILE)
-    vocab = [col for col in df.columns if col not in ["Email No.", "Prediction"]]
-    joblib.dump(vocab, VOCAB_FILE)
-    print("Model, TF-IDF, and vocab saved.")
+    joblib.dump(vectorizer, VOCAB_FILE)
+    print("\nModel and transformers saved.")
 
+# ---------------------------------------
+# Prediction Pipeline
+# ---------------------------------------
 
-def preprocess_email(text):
-    text = text.lower()
-    text = re.sub(r"[^a-z\s]", " ", text)
-    words = text.split()
-    return words
-
-def email_to_feature(text, vocab):
-    words = preprocess_email(text)
-    words_count = {w: words.count(w) for w in set(words)}
-
-    features = np.zeros(len(vocab))
-    for i, word in enumerate(vocab):
-        features[i] = words_count.get(word, 0)
-
-    return features.reshape(1, -1)
-
-def predict_email(text, vocab, tfidf, model):
-    X_new = email_to_feature(text, vocab)
-    X_new_tfidf = tfidf.transform(X_new)
-    pred = model.predict(X_new_tfidf)[0]
+def predict_email(text, vectorizer, tfidf, model):
+    x_count = vectorizer.transform([text])
+    x_tfidf = tfidf.transform(x_count)
+    pred = model.predict(x_tfidf)[0]
     return "Spam" if pred == 1 else "Not Spam"
 
-
+# Live Prediction Loop
 while True:
-    email_text = input("Enter the email (or type 'exit' to quit):\t")
+    email_text = input("\nEnter the email (or 'exit'): ")
     if email_text.lower() in ["exit", "quit"]:
         break
-    print("Prediction:", predict_email(email_text, vocab, tfidf, nb))
+    print("Prediction:", predict_email(email_text, vectorizer, tfidf, nb))
